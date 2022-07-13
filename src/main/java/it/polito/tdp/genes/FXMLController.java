@@ -1,8 +1,10 @@
 package it.polito.tdp.genes;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.genes.model.Adiacenti;
 import it.polito.tdp.genes.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -27,7 +29,7 @@ public class FXMLController {
     private Button btnRicerca;
 
     @FXML
-    private ComboBox<?> boxLocalizzazione;
+    private ComboBox<String> boxLocalizzazione;
 
     @FXML
     private TextArea txtResult;
@@ -39,7 +41,15 @@ public class FXMLController {
 
     @FXML
     void doStatistiche(ActionEvent event) {
-
+this.txtResult.clear();
+String localizzazione=this.boxLocalizzazione.getValue();
+if(localizzazione==null) {
+	this.txtResult.appendText("selezionare dalla tendina un elemento ");
+	return;
+}
+List<Adiacenti>adiacenti=model.getAdiacenti(localizzazione);
+this.txtResult.appendText("Adiacenti a: "+localizzazione+"\n");
+this.txtResult.appendText(adiacenti.toString());
     }
 
     @FXML
@@ -53,5 +63,11 @@ public class FXMLController {
 
 	public void setModel(Model model) {
 		this.model = model;
+		this.model.creaGrafo();
+		txtResult.appendText("Grafo creato!\n");
+    	txtResult.appendText("# Vertici : " + this.model.nVertici() + "\n");
+    	txtResult.appendText("# Archi : " + this.model.nArchi() + "\n");
+    	this.boxLocalizzazione.getItems().clear();
+    	this.boxLocalizzazione.getItems().addAll(this.model.getVertici());
 	}
 }
